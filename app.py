@@ -1,19 +1,15 @@
 import os
-import time
-import fitz  # PyMuPDF for PDF text extraction
-import json
-import requests
 import sqlite3
+import requests
+import fitz  # PyMuPDF for PDF text extraction
 from flask import Flask, request, jsonify, render_template, g
 
 app = Flask(__name__)
 
 # API Keys
-ASSEMBLYAI_API_KEY = "4e31b2a375b24bccbe77b9d0c46bbc68"
 GROQ_API_KEY = "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"
 
-# API Endpoints
-ASSEMBLYAI_URL = "https://api.assemblyai.com/v2"
+# API Endpoint
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 MODEL_NAME = "llama3-8b-8192"
 
@@ -123,41 +119,6 @@ def chat():
         return jsonify({"reply": bot_reply})
     except Exception as e:
         return jsonify({"reply": f"Error: {str(e)}"}), 500
-
-# -------------------- VOICE TO TEXT --------------------
-@app.route("/voice", methods=["POST"])
-def transcribe_audio():
-    """Processes an uploaded voice file and converts it to text."""
-    if "audio" not in request.files:
-        return jsonify({"message": "No audio file uploaded"}), 400
-
-    audio_file = request.files["audio"]
-
-    headers = {"authorization": ASSEMBLYAI_API_KEY}
-    response = requests.post(f"{ASSEMBLYAI_URL}/upload", headers=headers, files={"file": audio_file})
-
-    if response.status_code != 200:
-        return jsonify({"message": "Failed to upload audio"}), 500
-
-    upload_url = response.json()["upload_url"]
-
-    # Send for transcription
-    data = {"audio_url": upload_url}
-    response = requests.post(f"{ASSEMBLYAI_URL}/transcript", headers=headers, json=data)
-
-    if response.status_code != 200:
-        return jsonify({"message": "Failed to start transcription"}), 500
-
-    transcript_id = response.json()["id"]
-
-    # Polling for transcription completion
-    while True:
-        transcript_response = requests.get(f"{ASSEMBLYAI_URL}/transcript/{transcript_id}", headers=headers).json()
-        if transcript_response["status"] == "completed":
-            return jsonify({"text": transcript_response["text"]})
-        elif transcript_response["status"] == "failed":
-            return jsonify({"message": "Transcription failed"}), 500
-        time.sleep(3)
 
 # -------------------- HISTORY --------------------
 @app.route("/history", methods=["GET"])
