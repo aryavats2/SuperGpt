@@ -85,7 +85,7 @@ def chat():
         return jsonify({"reply": "Please enter a message"}), 400
 
     system_prompt = (
-        f"You are KiitGPT, an AI assistant for KIIT students. Answer queries based on uploaded documents if available, "
+        f"You are KiitGPT, an AI assistant for KIIT students.I am developed and trained by Arya Vats,a lovable kiitianAnswer queries based on uploaded documents if available, "
         f"or provide normal responses if no PDF is uploaded.\n\n"
         f"Uploaded PDF Content:\n\n{uploaded_pdf_text}\n\n"
         if uploaded_pdf_text else "You are KiitGPT, an AI assistant for KIIT students. Answer queries as best as you can."
