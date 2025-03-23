@@ -7,11 +7,11 @@ from flask import Flask, request, jsonify, render_template, g
 app = Flask(__name__)
 
 # API Keys
-GROQ_API_KEY = "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"
+GROQ_API_KEY = ""
 
 # API Endpoint
-GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
-MODEL_NAME = "llama3-8b-8192"
+GROQ_API_URL = ""
+MODEL_NAME = ""
 
 DATABASE = "chat_history.db"
 uploaded_pdf_text = ""  # Store extracted PDF text
